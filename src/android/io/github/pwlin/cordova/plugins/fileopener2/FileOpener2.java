@@ -29,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -44,6 +45,7 @@ import org.apache.cordova.PluginResult;
 import org.apache.cordova.CordovaResourceApi;
 
 public class FileOpener2 extends CordovaPlugin {
+	private static final String TAG = "FileOpener2";
 
 	/**
 	 * Executes the request and returns a boolean.
@@ -104,6 +106,9 @@ public class FileOpener2 extends CordovaPlugin {
 			try {
 				Uri path = Uri.fromFile(file);
 				Intent intent = new Intent(Intent.ACTION_VIEW);
+				Log.v(TAG, "Start opening file "+fileName);
+				Log.v(TAG, "File content type is "+ contentType);
+				Log.v(TAG, "Build.VERSION.SDK_INT"+Build.VERSION.SDK_INT);
 				if((Build.VERSION.SDK_INT >= 23 && !contentType.equals("application/vnd.android.package-archive")) || ((Build.VERSION.SDK_INT == 24 || Build.VERSION.SDK_INT == 25) && contentType.equals("application/vnd.android.package-archive"))) {
 
 					Context context = cordova.getActivity().getApplicationContext();
@@ -111,7 +116,7 @@ public class FileOpener2 extends CordovaPlugin {
 					intent.setDataAndType(path, contentType);
 					intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 					intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-					//intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // re-enable to compare installation
 
 				 	List<ResolveInfo> infoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
 					for (ResolveInfo resolveInfo : infoList) {
